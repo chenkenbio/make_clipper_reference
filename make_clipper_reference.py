@@ -79,8 +79,12 @@ def main():
             mrna_length = _merge_intervals(exons, to_length=True)
             # chr1    AS_STRUCTURE    gene    157784  157887  .       -       .       gene_id=ENSG00000222623.1;mrna_length=104;premrna_length=104
             structure_fp.write(f"{chrom}\tAS_STRUCTURE\tgene\t{tx_start + 1}\t{tx_end}\t.\t{strand}\t.\tgene_id={gene_id};mrna_length={mrna_length};premrna_length={premrna_length}\n")
+            seen = set()
             for i, (exon_start, exon_end) in enumerate(exons):
-                exon_fp.write(f"{chrom}\t{exon_start}\t{exon_end}\t{gene_id}.{i}\t0\t{strand}\n")
+                if (exon_start, exon_end) in seen:
+                    continue
+                seen.add((exon_start, exon_end))
+                exon_fp.write(f"{chrom}\t{exon_start}\t{exon_end}\t{gene_id}\t0\t{strand}\n")
 
     os.remove(tmp_genepred)
 
